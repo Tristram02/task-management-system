@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: http://backend:5000
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    depends_on:
+     - db
+     - auth-service
+     - notification-service
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      AUTH_SERVICE_URL: http://auth-service:5001
+      NOTIFICATION_SERVICE_URL: http://notification-service:5002
+    secrets:
+      - db_password
+    networks:
+    - app-network
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: task_management
+    secrets:
+      - db_password
+    volumes:
+      - postgres_data:/var/lib/posrgresql/data
+    networks:
+      - app-network
+
+  auth-services:
+    build: ./auth-service
+    networks:
+      - app-network
+
+  notification-service:
+    build: ./notification-service
+    depends_on:
+      - mailhog
+    networks:
+      - app-network
+
+  mailhog:
+    image: mailhog/mailhog
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+networks:
+  app-network:
+    driver: bridge
+    internal: true
