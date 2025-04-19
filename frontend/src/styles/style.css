@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+
+html, body {
+    min-height: 100vh;
+    padding: 0!important;
+    margin: 0!important;
+    overflow: hidden;
+}
+
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.background {
+    background-image: url("../image/background_1.jpg");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    z-index: 1;
+}
+
+.blur {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(99, 99, 99, 0.4);
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(15px);
+}
+
+.content {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+}
+
+.content > .row:nth-child(1) {
+    display: flex;
+    justify-content: flex-end;
+    height: 12%;
+}
+
+.content > .row > .header {
+    color: rgb(233, 233, 233);
+    text-align: center;
+    display: flex;
+    width: 85%;
+    height: 100%;
+    border-radius: 40px 40px 0px 0px;
+    padding-left: 40px;
+    padding-right: 40px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.content > .row > .header > h1 {
+    font-family: "Orbitron", sans-serif;
+    font-size: 4.5rem;
+}
+
+.content > .row > .header > .clock {
+    font-family: "Orbitron", sans-serif;
+    font-size: 3rem;
+}
+
+.content > .row:nth-child(2) {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: row;
+}
+
+.content > .row:nth-child(2) > .sidebar {
+    width: 15%;
+    height: 100%;
+}
+
+.content > .row:nth-child(2) > .sidebar > .menu {
+    font-family: "Orbitron", sans-serif;
+    color: rgb(233, 233, 233);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
+    padding: 10px;
+    padding-left: 30px;
+}
+
+.content > .row:nth-child(2) > .sidebar > .menu > .item {
+    font-size: 1.5rem;
+}
+
+.content > .row:nth-child(2) > .sidebar > .menu > .item:hover {
+    color: rgb(2, 197, 122);
+    cursor: pointer;
+}
+
+.content > .row:nth-child(2) > .main {
+    width: 85%;
+    height: 100%;
+    padding: 3vw;
+    display: flex;
+    justify-content: center;
+}
+
+.content > .row:nth-child(2) > .main .carousel-root,
+.content > .row:nth-child(2) > .main .carousel-slider {
+    height: 100%;
+    width: 60%;
+}
+
+.slider-wrapper, .slider {
+    height: 100%;
+}
+
+.content > .row:nth-child(2) > .main .carousel li.slide {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.content > .row:nth-child(2) > .main .card-wrapper {
+    background-color: rgba(65, 71, 71, 0.4);
+    width: 50%;
+    height: 80%;
+    border-radius: 20px;
+}
+
+.content > .row:nth-child(2) > .main .card {
+    font-family: "Orbitron", sans-serif;
+    color: rgb(233, 233, 233);
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 2.5vw;
+}

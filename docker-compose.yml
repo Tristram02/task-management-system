@@ -1,33 +1,46 @@
 version: '3.8'
 
 services:
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - task-network
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
     depends_on:
       - backend
-    environment:
-      REACT_APP_API_URL: http://backend:5000
     networks:
-      - app-network
+      - task-network
 
   backend:
     build: ./backend
-    depends_on:
-     - db
-     - auth-service
-     - notification-service
+    ports:
+      - "5000:5000"
     environment:
       DB_HOST: db
       DB_USER: postgres
+      DB_NAME: task_management
       DB_PASSWORD_FILE: /run/secrets/db_password
-      AUTH_SERVICE_URL: http://auth-service:5001
-      NOTIFICATION_SERVICE_URL: http://notification-service:5002
     secrets:
       - db_password
+    depends_on:
+      - db
+      # - auth-service
+      # - notification-service
     networks:
-    - app-network
+      - task-network
+
   db:
     image: postgres:14
     environment:
@@ -37,26 +50,37 @@ services:
     secrets:
       - db_password
     volumes:
-      - postgres_data:/var/lib/posrgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - app-network
+      - task-network
+    ports:
+    - "5432:5432"
 
-  auth-services:
-    build: ./auth-service
-    networks:
-      - app-network
+  # auth-service:
+  #   build: ./auth-service
+  #   ports:
+  #     - "5001:5001"
+  #   environment:
+  #     - JWT_SECRET=your-secret-key
+  #     - DATABASE_URL=postgres://user:password@postgres:5432/taskdb
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - task-network
 
-  notification-service:
-    build: ./notification-service
-    depends_on:
-      - mailhog
-    networks:
-      - app-network
-
-  mailhog:
-    image: mailhog/mailhog
-    networks:
-      - app-network
+  # notification-service:
+  #   build: ./notification-service
+  #   ports:
+  #     - "5002:5002"
+  #   environment:
+  #     - SMTP_HOST=smtp.example.com
+  #     - SMTP_PORT=587
+  #     - SMTP_USER=user
+  #     - SMTP_PASS=password
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - task-network
 
 volumes:
   postgres_data:
@@ -66,6 +90,5 @@ secrets:
     file: ./secrets/db_password.txt
 
 networks:
-  app-network:
+  task-network:
     driver: bridge
-    internal: true
