@@ -1,73 +1,92 @@
 .calendar {
-    font-family: Arial, sans-serif;
-    width: 70%;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  
-  .calendar .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .calendar .header button {
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-  }
-  
-  .calendar .days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .day-name {
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  .dates {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-  }
-  
-  .date {
-    padding: 10px;
-    border-radius: 5px;
-    background: #f5f5f5;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .date span {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .date.today {
-    border: 2px solid #4CAF50;
-  }
-  
-  .task {
-    background: #ffeb3b;
-    border-radius: 3px;
-    padding: 3px 6px;
-    margin: 2px 0;
-    font-size: 0.8em;
-    text-align: center;
-  }
-  
-  .empty {
-    visibility: hidden;
-  }
+  font-family: Arial, sans-serif;
+  width: 70%;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(65, 71, 71, 0.4);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-height: 90%;
+  overflow: auto;
+  margin-top: 4vh;
+  color: rgb(233, 233, 233);;
+}
+
+.calendar .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar .header button {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: rgb(233, 233, 233);
+}
+
+.calendar .days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.day-name {
+  text-align: center;
+  font-weight: bold;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.date {
+  padding: 10px;
+  border-radius: 5px;
+  background: rgba(124, 124, 124, 0.5);
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.date span {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.date.today {
+  border: 3px solid #4CAF50;
+  background-color: rgba(163, 252, 170, 0.45);
+}
+
+.task {
+  background: #757575;
+  border-radius: 3px;
+  padding: 3px 6px;
+  margin: 2px 0;
+  font-size: 0.8em;
+  text-align: center;
+  color: rgb(48, 48, 48);
+}
+
+.priority-1 {
+    background-color: #0092e7;
+}
+    
+.priority-2 {
+  background-color: #e7d800;
+}  
+
+.priority-3 {
+  background-color: #e72300;
+}
+
+.empty {
+  visibility: hidden;
+}

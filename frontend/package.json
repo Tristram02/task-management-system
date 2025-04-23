@@ -5,6 +5,7 @@
   "proxy": "http://backend:5000",
   "dependencies": {
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-live-clock": "^6.1.25",
     "react-responsive-carousel": "^3.2.23",

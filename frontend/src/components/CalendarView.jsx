@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/calendarview.css';
 
-export const CalendarView = () => {
+export const CalendarView = ({tasks}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [tasks, setTasks] = useState([
-    { date: '2025-06-05', title: 'Project Deadline' },
-    { date: '2025-10-12', title: 'Team Meeting' },
-    { date: '2025-10-15', title: 'Client Call' },
-    { date: '2025-10-20', title: 'Design Review' },
-  ]);
 
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 0).getDay();
 
   const days = [];
   for (let i = 1; i <= daysInMonth; i++) {
@@ -41,7 +35,7 @@ export const CalendarView = () => {
 
   const getTasksForDay = (day) => {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return tasks.filter(task => task.date === dateStr);
+    return tasks.filter(task => task.due_date.split('T')[0] === dateStr);
   };
 
   return (
@@ -70,7 +64,7 @@ export const CalendarView = () => {
             <div key={day} className={`date ${isToday ? 'today' : ''}`}>
               <span>{day}</span>
               {tasksForDay.map(task => (
-                <div key={task.title} className="task">
+                <div key={task.title} className={`task priority-${task.priority}`}>
                   {task.title}
                 </div>
               ))}
