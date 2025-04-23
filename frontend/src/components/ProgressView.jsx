@@ -19,7 +19,6 @@ const move = (source, destination, droppableSource, droppableDestination) => {
     const result = {};
     result[droppableSource.droppableId] = sourceClone;
     result[droppableDestination.droppableId] = destClone;
-    console.log(result);
     return result;
 }
 
@@ -149,7 +148,7 @@ export const ProgressView = ({ tasks, onUpdateTaskStatus }) => {
                                                 >
                                                     {task.title}<br/>
                                                     Prio: {task.priority}<br/>
-                                                    Deadline: {task.due_date.split('T')[0]}
+                                                    Deadline: {task.due_date?.split('T')[0]}
                                                 </div>
                                             )}
                                         </Draggable>

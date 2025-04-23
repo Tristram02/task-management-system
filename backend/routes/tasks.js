@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const { rows, rowCount } = await db.query('SELECT * FROM public.tasks WHERE id = $1', [id]);
+        const { rows, rowCount } = await db.query(`SELECT * FROM public.tasks WHERE id = ${id}`);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: 'Task not found' });
@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { title, description, status } = req.body;
+    const { title, priority, due_date, description, status } = req.body;
 
     if (!title) {
         return res.status(400).json({ error: 'Title is required' });
@@ -50,11 +50,11 @@ router.post('/', async (req, res) => {
 
     try {
         const query = `
-            INSERT INTO public.tasks (title, description, status)
-            VALUES ($1, $2, $3)
-            RETURNING *; -- Return the created row
+            INSERT INTO public.tasks (title, priority, due_date, description, status)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING *;
         `;
-        const values = [title, description, finalStatus];
+        const values = [title, priority, due_date, description, finalStatus];
 
         const { rows } = await db.query(query, values);
 
@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
     const { id } = req.params;
-    const { title, description, status } = req.body;
+    const { title, priority, due_date, status, description } = req.body;
 
     if (title === undefined && description === undefined && status === undefined) {
         return res.status(400).json({ error: 'No update fields provided (title, description, status)' });
@@ -89,13 +89,21 @@ router.patch('/:id', async (req, res) => {
             updates.push(`title = $${paramIndex++}`);
             values.push(title);
         }
-        if (description !== undefined) {
-            updates.push(`description = $${paramIndex++}`);
-            values.push(description);
+        if (priority !== undefined) {
+            updates.push(`priority = $${paramIndex++}`);
+            values.push(priority);
+        }
+        if (due_date !== undefined) {
+            updates.push(`due_date = $${paramIndex++}`);
+            values.push(due_date);
         }
         if (status !== undefined) {
             updates.push(`status = $${paramIndex++}`);
             values.push(status);
+        }
+        if (description !== undefined) {
+            updates.push(`description = $${paramIndex++}`);
+            values.push(description);
         }
 
         values.push(id);
@@ -104,7 +112,7 @@ router.patch('/:id', async (req, res) => {
             UPDATE public.tasks
             SET ${updates.join(', ')}
             WHERE id = $${paramIndex}
-            RETURNING *; -- Return the updated row
+            RETURNING *;
         `;
 
         const { rows, rowCount } = await db.query(query, values);
@@ -126,7 +134,7 @@ router.patch('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const { rowCount } = await db.query('DELETE FROM public.tasks WHERE id = $1 RETURNING id', [id]);
+        const { rowCount } = await db.query(`DELETE FROM public.tasks WHERE id = ${id} RETURNING id`);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: 'Task not found' });

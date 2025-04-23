@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../styles/calendarview.css';
 
 export const CalendarView = ({tasks}) => {
@@ -35,7 +35,7 @@ export const CalendarView = ({tasks}) => {
 
   const getTasksForDay = (day) => {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return tasks.filter(task => task.due_date.split('T')[0] === dateStr);
+    return tasks.filter(task => task.due_date?.split('T')[0] === dateStr);
   };
 
   return (

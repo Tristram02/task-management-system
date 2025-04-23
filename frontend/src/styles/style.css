@@ -63,6 +63,18 @@ html, body {
     font-size: 4.5rem;
 }
 
+.content > .row > .header > .newTask {
+    background-color: rgba(233, 233, 233, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.content > .row > .header > .newTask:hover {
+    background-color: rgb(2, 197, 122);
+    color: rgb(41, 41, 41);
+}
+
 .content > .row > .header > .clock {
     font-family: "Orbitron", sans-serif;
     font-size: 3rem;
@@ -139,4 +151,41 @@ html, body {
     align-items: flex-start;
     flex-direction: column;
     padding: 2.5vw;
+    height: 80%;
+}
+
+.content > .row:nth-child(2) > .main .card-wrapper > .buttons-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.content > .row:nth-child(2) > .main .card-wrapper .delete-btn {
+    background-color: rgba(233, 233, 233, 0.3);
+    color: rgb(233, 233, 233);
+    width: 20%;
+    padding: 5px;
+    border-radius: 10px;
+    margin-left: 20px;
+}
+
+.content > .row:nth-child(2) > .main .card-wrapper .delete-btn:hover {
+    background-color: rgb(209, 17, 17);
+    color: rgb(51, 51, 51);
+    cursor: pointer;
+}
+
+.content > .row:nth-child(2) > .main .card-wrapper .edit-btn {
+    background-color: rgba(233, 233, 233, 0.3);
+    color: rgb(233, 233, 233);
+    width: 20%;
+    padding: 5px;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.content > .row:nth-child(2) > .main .card-wrapper .edit-btn:hover {
+    background-color: rgb(209, 206, 17);
+    color: rgb(51, 51, 51);
+    cursor: pointer;
 }
