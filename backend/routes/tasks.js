@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const { rows } = await db.query('SELECT * FROM public.tasks');
+        const { rows } = await db.query('SELECT * FROM public.tasks where user_id = $1', [req.user.id]);
         res.status(200).json(rows);
     } catch (error) {
         console.error('Error fetching tasks: ', error);
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const { rows, rowCount } = await db.query(`SELECT * FROM public.tasks WHERE id = ${id}`);
+        const { rows, rowCount } = await db.query(`SELECT * FROM public.tasks WHERE id = $1`, [id]);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: 'Task not found' });
@@ -25,7 +25,7 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error(`Error fetching task ${id}:`, error);
         if (error.code === '22P02') {
-             return res.status(400).json({ error: 'Invalid task ID format' });
+            return res.status(400).json({ error: 'Invalid task ID format' });
         }
         res.status(500).json({ error: 'Failed to fetch task' });
     }
@@ -33,6 +33,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const { title, priority, due_date, description, status } = req.body;
+    const user_id = req.user.id;
 
     if (!title) {
         return res.status(400).json({ error: 'Title is required' });
@@ -50,11 +51,11 @@ router.post('/', async (req, res) => {
 
     try {
         const query = `
-            INSERT INTO public.tasks (title, priority, due_date, description, status)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO public.tasks (title, priority, due_date, description, status, user_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *;
         `;
-        const values = [title, priority, due_date, description, finalStatus];
+        const values = [title, priority, due_date, description, finalStatus, user_id];
 
         const { rows } = await db.query(query, values);
 
@@ -134,7 +135,7 @@ router.patch('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const { rowCount } = await db.query(`DELETE FROM public.tasks WHERE id = ${id} RETURNING id`);
+        const { rowCount } = await db.query(`DELETE FROM public.tasks WHERE id = $1 RETURNING id`, [id]);
 
         if (rowCount === 0) {
             return res.status(404).json({ error: 'Task not found' });

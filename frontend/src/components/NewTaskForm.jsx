@@ -29,7 +29,8 @@ export const NewTaskForm = ({ onSubmitTask, onClose }) => {
         };
 
         try {
-            await onSubmitTask(newTaskData);
+            const token = localStorage.getItem('token');
+            await onSubmitTask(newTaskData, token);
         } catch (apiError) {
             console.error("Failed to create task:", apiError);
             setError(apiError.message || 'Failed to create task. Please try again.');

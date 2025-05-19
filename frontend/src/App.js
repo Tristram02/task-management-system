@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Clock from 'react-live-clock';
 import './styles/style.css';
+import './styles/auth.css';
 import { MainView } from './components/MainView';
 import { CalendarView } from './components/CalendarView';
 import { ProgressView } from './components/ProgressView';
 import { Modal } from './components/Modal';
 import { NewTaskForm } from './components/NewTaskForm';
 import { EditTaskForm } from './components/EditTaskForm';
+import { LoginForm } from './components/LoginForm';
+import { RegisterForm } from './components/RegisterForm';
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -14,9 +17,15 @@ function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [taskToEdit, setTaskToEdit] = useState(null);
+    const [jwtToken, setJwtToken] = useState(() => localStorage.getItem('jwt_token'));
+    const [authMode, setAuthMode] = useState('login');
+    const [authError, setAuthError] = useState('');
 
     useEffect(() => {
-        fetch(`/tasks`)
+        if (!jwtToken) return;
+        fetch(`/tasks`, {
+            headers: { Authorization: `Bearer ${jwtToken}` }
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -27,7 +36,15 @@ function App() {
                 setTasks(data);
             })
             .catch((error) => console.error('Error fetching tasks:', error));
-    }, []);
+    }, [jwtToken]);
+
+    useEffect(() => {
+        if (jwtToken) {
+            localStorage.setItem('jwt_token', jwtToken);
+        } else {
+            localStorage.removeItem('jwt_token');
+        }
+    }, [jwtToken]);
 
     const handleUpdateTaskStatus = (taskId, newStatus) => {
         const originalTasks = [...tasks];
@@ -40,7 +57,10 @@ function App() {
 
         fetch(`/tasks/${taskId}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                ...(jwtToken && { Authorization: `Bearer ${jwtToken}` })
+            },
             body: JSON.stringify({ status: newStatus })
         })
         .then(response => {
@@ -57,11 +77,13 @@ function App() {
     };
 
     const handleCreateTask = async (newTaskData) => {
-        console.log('Submitting new task:', newTaskData);
         try {
             const response = await fetch(`/tasks`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(jwtToken && { Authorization: `Bearer ${jwtToken}` })
+                },
                 body: JSON.stringify(newTaskData),
             });
 
@@ -83,7 +105,7 @@ function App() {
     };
     
     const handleDeleteTask = (taskId) => {
-        if (!window.confirm(`Are you sure you want to delete task ${taskId}?`)) {
+        if (!window.confirm(`Are you sure you want to delete this task?`)) {
             return;
         }
 
@@ -94,6 +116,10 @@ function App() {
 
         fetch(`/tasks/${taskId}`, {
             method: 'DELETE',
+            headers: { 
+                'Content-Type': 'application/json',
+                ...(jwtToken && { Authorization: `Bearer ${jwtToken}` })
+            },
         })
         .then(response => {
             if (!response.ok) {
@@ -128,7 +154,10 @@ function App() {
         try {
             const response = await fetch(`/tasks/${taskId}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(jwtToken && { Authorization: `Bearer ${jwtToken}` })
+                },
                 body: JSON.stringify(updatedTaskData),
             });
 
@@ -169,6 +198,77 @@ function App() {
         }
     };
 
+    const handleLogin = async ({email, password}) => {
+        setAuthError('');
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Login failed');
+            setJwtToken(data.token);
+        } catch (err) {
+            setAuthError(err.message);
+        }
+    }
+
+    const handleRegister = async ({ email, password }) => {
+        setAuthError('');
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Register failed');
+            setAuthMode('login');
+        } catch (err) {
+            setAuthError(err.message);
+        }
+    };
+
+    const handleLogout = () => {
+        setJwtToken(null);
+        setTasks([]);
+    };
+
+    if (!jwtToken) {
+        return (
+            <div>
+                <div className='background'>
+                    <div className='blur'></div>
+                </div>
+                <div className='auth-content'>
+                    {authMode === 'login' ? (
+                        <>
+                            <LoginForm onLogin={handleLogin} error={authError} />
+                            <p className='auth-p'>
+                                Don't have an account?{' '}
+                                <span className='auth-span' onClick={() => { setAuthMode('register'); setAuthError(''); }}>
+                                    Register
+                                </span>
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <RegisterForm onRegister={handleRegister} error={authError} />
+                            <p className='auth-p'>
+                                Already have an account?{' '}
+                                <span className='auth-span' onClick={() => { setAuthMode('login'); setAuthError(''); }}>
+                                    Login
+                                </span>
+                            </p>
+                        </>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <div className='background'>
@@ -188,7 +288,7 @@ function App() {
                             <div className='item' onClick={() => setActiveView('all')}>All tasks</div>
                             <div className='item' onClick={() => setActiveView('calendar')}>Calendar View</div>
                             <div className='item' onClick={() => setActiveView('progress')}>Progress View</div>
-                            <div className='item'>Log out</div>
+                            <div className='item' onClick={handleLogout}>Log out</div>
                         </div>
                     </div>
                     {renderActiveView()}
