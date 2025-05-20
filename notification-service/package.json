@@ -1,0 +1,9 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "main": "reminder-worker.js",
+  "dependencies": {
+    "nodemailer": "^6.9.8",
+    "pg": "^8.11.3"
+  }
+}

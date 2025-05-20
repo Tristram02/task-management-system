@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Title is required' });
     }
     if (!status) {
-        return res.status(400).json({ error: 'Status is required' }); // Or set a default below
+        return res.status(400).json({ error: 'Status is required' });
     }
 
     const allowedStatuses = ['pending', 'on progress', 'done'];
@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
 
         const { rows } = await db.query(query, values);
 
-        res.status(201).json(rows[0]); // 201 Created
+        res.status(201).json(rows[0]);
     } catch (error) {
         console.error('Error creating task:', error);
         res.status(500).json({ error: 'Failed to create task' });

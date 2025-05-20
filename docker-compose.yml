@@ -93,6 +93,38 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  
+  notification-service:
+    build: ./notification-service
+    depends_on:
+      - db
+      - auth-db
+      - mailhog
+    environment:
+      DB_HOST: db
+      DB_USER: postgres
+      DB_NAME: task_management
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      AUTH_DB_HOST: auth-db
+      AUTH_DB_USER: auth_user
+      AUTH_DB_NAME: auth_service
+      AUTH_DB_PASSWORD_FILE: /run/secrets/auth_db_password
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+    secrets:
+      - db_password
+      - auth_db_password
+    networks:
+      - task-network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - task-network
 
 volumes:
   postgres_data:
